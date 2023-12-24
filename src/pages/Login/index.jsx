@@ -8,18 +8,8 @@ import smallTeam from "../../assets/img/small-team.svg";
 import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
 import { Input } from "../../components/Input";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { loginSchema as schema } from "../../utils/yup";
 
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .required("Email обязателен")
-    .email("Введите корректный e-mail"),
-  password: yup
-    .string()
-    .required("Пароль обязателен")
-    .min(5, "Пароль должен быть не менее 5 символов"),
-});
 export const Login = () => {
   const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
@@ -52,11 +42,13 @@ export const Login = () => {
   return (
     <div className="">
       <div className="flex py-10 pl-12 max-[640px]:py-[20px] max-[640px]:pl-[26px]">
-        <img
-          src={logo}
-          alt="logo"
-          className="w-[160px] h-[80px] max-[640px]:w-[120px] max-[640px]:h-[60px]"
-        />
+        <Link to={`/`}>
+          <img
+            src={logo}
+            alt="logo"
+            className="w-[160px] h-[80px] max-[640px]:w-[120px] max-[640px]:h-[60px]"
+          />
+        </Link>
       </div>
       <div className="flex flex-row justify-between items-center mx-[150px] max-[1280px]:mx-[26px] mb-[54px]">
         <div className="w-[40%] min-w-[320px] max-[700px]:w-full max-w-[550px] rounded-[15px] px-[36px] py-[36px] min-h-[600px] border-[1px] border-[#878787]">

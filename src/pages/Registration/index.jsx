@@ -7,27 +7,7 @@ import smallTeam from "../../assets/img/small-team.svg";
 import { fetchRegister, selectIsAuth } from "../../redux/slices/auth";
 import { Input } from "../../components/Input";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .required("Email обязателен")
-    .email("Введите корректный e-mail"),
-  fullName: yup
-    .string()
-    .required("Имя пользователя обязательно")
-    .min(3, "Имя пользователя должно быть не менее 3 символов"),
-
-  password: yup
-    .string()
-    .required("Пароль обязателен")
-    .min(5, "Пароль должен быть не менее 5 символов"),
-  confirmPassword: yup
-    .string()
-    .required("Пароль обязателен")
-    .oneOf([yup.ref("password")], "Пароли не совпадают"),
-});
+import { registerSchema as schema } from "../../utils/yup";
 
 export const Registration = () => {
   const isAuth = useSelector(selectIsAuth);
@@ -63,11 +43,13 @@ export const Registration = () => {
   return (
     <div className="">
       <div className="flex py-10 pl-12 max-[640px]:py-[20px] max-[640px]:pl-[26px]">
-        <img
-          src={logo}
-          alt="logo"
-          className="w-[160px] h-[80px] max-[640px]:w-[120px] max-[640px]:h-[60px]"
-        />
+        <Link to={`/`}>
+          <img
+            src={logo}
+            alt="logo"
+            className="w-[160px] h-[80px] max-[640px]:w-[120px] max-[640px]:h-[60px]"
+          />
+        </Link>
       </div>
       <div className="flex flex-row justify-between items-center mx-[150px] max-[1280px]:mx-[26px] mb-[54px]">
         <div className="w-[40%] min-w-[320px] max-[700px]:w-full max-w-[550px] rounded-[15px] px-[40px] py-[25px] min-h-[760px] border-[1px] border-[#878787]">
