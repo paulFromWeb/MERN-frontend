@@ -8,6 +8,9 @@ import { fetchRegister, selectIsAuth } from "../../redux/slices/auth";
 import { Input } from "../../components/Input";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema as schema } from "../../utils/yup";
+import toast, { Toaster } from "react-hot-toast";
+import { useState } from "react";
+import iconSpinner from "../../assets/img/icon-spinner.svg";
 
 export const Registration = () => {
   const isAuth = useSelector(selectIsAuth);
@@ -21,17 +24,20 @@ export const Registration = () => {
     mode: "onTouched",
     resolver: yupResolver(schema),
   });
-
+  const [isLoading, setLoading] = useState(false);
   const onSubmit = async (values) => {
+    setLoading(true);
     delete values.confirmPassword;
     console.log(values);
     const data = await dispatch(fetchRegister(values));
 
     if (!data.payload) {
-      return alert("Не удалось регистрироваться!");
+      setLoading(false);
+      return toast.error("К сожалению, регистрация не удалась!");
     }
 
     if ("token" in data.payload) {
+      setLoading(false);
       window.localStorage.setItem("token", data.payload.token);
     }
   };
@@ -42,6 +48,7 @@ export const Registration = () => {
 
   return (
     <div className="">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="flex py-10 pl-12 max-[640px]:py-[20px] max-[640px]:pl-[26px]">
         <Link to={`/`}>
           <img
@@ -104,9 +111,17 @@ export const Registration = () => {
             />
             <button
               type="submit"
-              className="w-full bg-black rounded-[4px] h-[60px] text-white font-['Poppins'] text-[16px] font-medium"
+              className="w-full bg-black rounded-[4px] h-[60px] text-white font-['Poppins'] flex items-center justify-center text-[16px] font-medium"
             >
-              Регистрация
+              {isLoading ? (
+                <img
+                  src={iconSpinner}
+                  className="w-8 h-8 animate-spin stroke-[white]"
+                  alt=""
+                />
+              ) : (
+                "Регистрация"
+              )}
             </button>
           </form>
           <div className="flex justify-center mt-[20px]">

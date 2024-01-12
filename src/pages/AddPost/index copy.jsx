@@ -16,8 +16,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { postSchema as schema } from "../../utils/yup";
 import { Input } from "../../components/Input";
-import { useEffect } from "react";
-import iconSpinner from "../../assets/img/icon-spinner.svg";
 
 export const AddPost = () => {
   const { id } = useParams();
@@ -25,31 +23,20 @@ export const AddPost = () => {
   const isAuth = useSelector(selectIsAuth);
   const [isLoading, setLoading] = React.useState(false);
   const [text, setText] = React.useState("");
-
   const [title, setTitle] = React.useState("");
   const [tags, setTags] = React.useState("");
   const [imageUrl, setImageUrl] = React.useState("");
   const inputFileRef = React.useRef(null);
-  const isEditing = Boolean(id);
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors, isValid },
   } = useForm({
     mode: "onTouched",
     resolver: yupResolver(schema),
   });
+  const isEditing = Boolean(id);
 
-  useEffect(() => {
-    register("text");
-  }, [register]);
-
-  const onEditorStateChange = (editorState) => {
-    setValue("text", editorState);
-  };
-  const editorContent = watch("text");
   const handleChangeFile = async (event) => {
     try {
       const formData = new FormData();
@@ -70,17 +57,16 @@ export const AddPost = () => {
   const onChange = React.useCallback((value) => {
     setText(value);
   }, []);
-  console.log(tags);
-  const onSubmit = async (values) => {
-    console.log(values);
+
+  const onSubmit = async () => {
     try {
       setLoading(true);
 
       const fields = {
-        title: values.title,
+        title,
         imageUrl,
-        tags: values.theme,
-        text: values.text,
+        tags,
+        text,
       };
 
       const { data } = isEditing
@@ -101,11 +87,10 @@ export const AddPost = () => {
       axios
         .get(`/posts/${id}`)
         .then(({ data }) => {
-          setValue("title", data.title);
-          setValue("theme", data.tags.join(","));
-          setValue("imageUrl", data.imageUrl);
-          setValue("text", data.text);
-          //
+          setTitle(data.title);
+          setText(data.text);
+          setImageUrl(data.imageUrl);
+          setTags(data.tags.join(","));
         })
         .catch((err) => {
           console.warn(err);
@@ -167,80 +152,56 @@ export const AddPost = () => {
             </div>
           )}
 
+          {/* <input
+            className={
+              "font-['Poppins'] mt-6 px-6 min-h-[60px] rounded-[10px] border border-[grey] text-[26px] leading-[28px] font-medium p-2"
+            }
+            placeholder="Заголовок"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          /> */}
           <Input
-            label="Заголовок"
+            label="Title"
             name="title"
             register={register}
             placeholder="Заголовок"
             required
-            className="font-['Poppins'] min-h-[60px] rounded-[10px] mt-5 text-[26px] leading-[28px] font-medium "
+            className="font-['Poppins'] min-h-[60px] rounded-[10px]  text-[26px] leading-[28px] font-medium p-2"
             errorMessage={errors.title && errors.title.message}
           />
-          <Input
-            label="Тема"
-            name="theme"
-            register={register}
-            placeholder="Тема"
-            required
-            className="font-['Poppins'] min-h-[60px] rounded-[10px]  mt-5  text-[22px] leading-[24px]  font-normal "
-            errorMessage={errors.theme && errors.theme.message}
-          />
-          {/* <input
+          <input
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             className={
               "font-['Poppins'] min-h-[60px] rounded-[10px]  mt-6 px-6 text-[22px] leading-[24px] border border-[grey] font-normal p-2"
             }
             placeholder="Тeги"
-          /> */}
-          <div className="quill-cont  mt-5">
+          />
+          <div className="quill-cont  mt-6">
             <ReactQuill
               theme="snow"
+              value={text}
+              onChange={onChange}
               placeholder="Ваш текст"
               modules={module}
               className="text-[40px]"
-              value={editorContent}
-              onChange={onEditorStateChange}
             />
-            {errors.text && (
-              <p className="font-['Poppins'] text-[red] text-[16px] leading-[24px] ">
-                {errors.text.message}
-              </p>
-            )}
-          </div>
-          <div className={"quill-sub flex flex-row flex-nowrap justify-end"}>
-            <button type="button">
-              <a
-                href="/"
-                className="mr-[15px] text-[blue] flex items-center py-2 px-8"
+            <div className={"quill-sub flex flex-row flex-nowrap justify-end"}>
+              <button>
+                <a
+                  href="/"
+                  className="mr-[15px] text-[blue] flex items-center py-2 px-8"
+                >
+                  Отмена
+                </a>
+              </button>
+              <button
+                type="submit"
+                className="bg-[blue] rounded-[10px] text-white py-2 px-8 flex items-center"
               >
-                Отмена
-              </a>
-            </button>
-            <button
-              type="submit"
-              className="bg-[blue] rounded-[10px]  justify-center text-white py-2 px-8 flex items-center"
-            >
-              {isEditing ? (
-                isLoading ? (
-                  <img
-                    src={iconSpinner}
-                    className="w-8 h-8 animate-spin stroke-[white]"
-                    alt=""
-                  />
-                ) : (
-                  "Сохранить"
-                )
-              ) : isLoading ? (
-                <img
-                  src={iconSpinner}
-                  className="w-8 h-8 animate-spin stroke-[white]"
-                  alt=""
-                />
-              ) : (
-                "Отправить"
-              )}
-            </button>
+                {isEditing ? "Сохранить" : "Отправить"}
+              </button>
+            </div>
           </div>
         </form>
         <div className="flex fixed right-[160px] bottom-[10px] max-[1200px]:hidden  z-[-10] items-center  justify-center ">

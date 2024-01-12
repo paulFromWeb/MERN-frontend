@@ -1,10 +1,8 @@
 import React from "react";
-import styles from "./UserInfo.module.scss";
 
-export const UserInfo = ({ avatarUrl, fullName, additionalText }) => {
+export const UserInfo = ({ fullName, additionalText }) => {
   return (
-    <div className={styles.root}>
-      {/* <img className={styles.avatar} src={avatarUrl || '/noavatar.png'} alt={fullName} /> */}
+    <div className={"flex items-center"}>
       <div className={"flex flex-row w-full text-[#6941C6]"}>
         <span
           className={

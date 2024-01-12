@@ -29,3 +29,17 @@ export const registerSchema = yup.object().shape({
     .required("Пароль обязателен")
     .oneOf([yup.ref("password")], "Пароли не совпадают"),
 });
+export const postSchema = yup.object().shape({
+  title: yup
+    .string()
+    .required("Введите заголовок")
+    .min(3, "Заголовок должен быть не менее 3 символов"),
+  theme: yup
+    .string()
+    .required("Введите название темы")
+    .min(3, "Название темы должно быть не менее 3 символов"),
+  text: yup
+    .string()
+    .required("Введите текст")
+    .min(250, "Текст должен быть не менее 250 символов"),
+});

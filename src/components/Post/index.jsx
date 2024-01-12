@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { UserInfo } from "../UserInfo";
@@ -26,7 +26,6 @@ export const Post = ({
   className,
 }) => {
   const dispatch = useDispatch();
-
   const onClickRemove = () => {
     if (window.confirm("Вы действительно хотите удалить статью?")) {
       dispatch(fetchRemovePost(id));
@@ -102,11 +101,15 @@ export const Post = ({
           </p>
           <p
             className={
-              "font-['Poppins'] text-[18px] leading-[24px] font-normal text-[#667085] " +
+              "font-['Poppins'] hyphens-auto text-[18px] leading-[24px] font-normal text-[#667085] " +
               (position === "vertical" &&
                 window.screen.availWidth >= 360 &&
                 "pt-4")
             }
+
+            // dangerouslySetInnerHTML={{
+            //   __html: text,
+            // }}
           >
             {text}
           </p>
